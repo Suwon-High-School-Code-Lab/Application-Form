@@ -29,16 +29,21 @@ export default function ApplyPage() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const supabase = createClient()
 
   useEffect(() => {
-    fetchQuestions()
-    if (user) {
-      fetchExistingSubmission()
+    if (authLoading) return
+    
+    if (!user) {
+      router.push('/login')
+      return
     }
-  }, [user])
+    
+    fetchQuestions()
+    fetchExistingSubmission()
+  }, [user, authLoading])
 
   const fetchQuestions = async () => {
     try {
@@ -190,12 +195,16 @@ export default function ApplyPage() {
     }
   }
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p>지원서를 불러오는 중...</p>
       </div>
     )
+  }
+
+  if (!user) {
+    return null
   }
 
   if (success) {

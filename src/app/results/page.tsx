@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { UserMenu } from '@/components/UserMenu'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
@@ -34,17 +35,19 @@ export default function ResultsPage() {
   const [questions, setQuestions] = useState<Record<string, Question>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const { user, isAdmin } = useAuth()
+  const { user, loading: authLoading, isAdmin } = useAuth()
   const router = useRouter()
   const supabase = createClient()
 
   useEffect(() => {
+    if (authLoading) return
+    
     if (!user) {
       router.push('/login')
       return
     }
     fetchData()
-  }, [user, isAdmin])
+  }, [user, authLoading, isAdmin])
 
   const fetchData = async () => {
     if (!user) return
@@ -101,12 +104,16 @@ export default function ResultsPage() {
     return answer?.toString() || '답변 없음'
   }
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p>결과를 불러오는 중...</p>
       </div>
     )
+  }
+
+  if (!user) {
+    return null
   }
 
   return (
@@ -125,6 +132,7 @@ export default function ResultsPage() {
             <Link href="/apply">
               <Button variant="ghost">지원서 작성</Button>
             </Link>
+            <UserMenu userEmail={user?.email} />
             <ThemeToggle />
           </div>
         </div>
@@ -150,15 +158,17 @@ export default function ResultsPage() {
 
         {submissions.length === 0 ? (
           <Card className="animate-scale-in">
-            <CardContent className="py-8 text-center text-muted-foreground">
-              제출된 지원서가 없습니다.
+            <CardContent className="py-8 text-center">
+              <p className="text-muted-foreground mb-4">
+                {isAdmin ? '제출된 지원서가 없습니다.' : '아직 결과가 나오지 않았습니다.'}
+              </p>
               {!isAdmin && (
-                <>
-                  {' '}
+                <p className="text-sm text-muted-foreground">
+                  지원서를 제출하셨다면 결과 발표를 기다려주세요.{' '}
                   <Link href="/apply" className="text-primary hover:underline">
                     지원서 작성하기
                   </Link>
-                </>
+                </p>
               )}
             </CardContent>
           </Card>
