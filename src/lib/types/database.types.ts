@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export type AnswerType = 'short_text' | 'long_text' | 'multiple_choice' | 'checkbox' | 'file_upload'
+export type AnswerType = 'short_text' | 'long_text' | 'number' | 'multiple_choice' | 'checkbox' | 'file_upload'
 export type SubmissionStatus = 'draft' | 'submitted'
 
 export interface Database {

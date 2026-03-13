@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { DynamicFormField } from '@/components/form/DynamicFormField'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { UserMenu } from '@/components/UserMenu'
 import Link from 'next/link'
 
 interface Question {
@@ -16,7 +17,7 @@ interface Question {
   order: number
   title: string
   content: string | null
-  answer_type: 'short_text' | 'long_text' | 'multiple_choice' | 'checkbox' | 'file_upload'
+  answer_type: 'short_text' | 'long_text' | 'number' | 'multiple_choice' | 'checkbox' | 'file_upload'
   options: any
   required: boolean
 }
@@ -221,9 +222,7 @@ export default function ApplyPage() {
           </Link>
           <div className="flex items-center gap-4">
             {user ? (
-              <Link href="/results">
-                <Button variant="ghost">결과 확인</Button>
-              </Link>
+              <UserMenu userEmail={user.email} />
             ) : (
               <Link href="/login">
                 <Button variant="ghost">로그인</Button>

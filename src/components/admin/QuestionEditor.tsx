@@ -33,6 +33,12 @@ export function QuestionEditor({ open, onOpenChange, question, onSave }: Questio
   const [options, setOptions] = useState<string[]>(
     question?.options ? (Array.isArray(question.options) ? question.options : []) : []
   )
+  const [minNumber, setMinNumber] = useState<string>(
+    question?.options?.min !== undefined ? String(question.options.min) : ''
+  )
+  const [maxNumber, setMaxNumber] = useState<string>(
+    question?.options?.max !== undefined ? String(question.options.max) : ''
+  )
   const [required, setRequired] = useState(question?.required ?? true)
   const [loading, setLoading] = useState(false)
 
@@ -53,12 +59,22 @@ export function QuestionEditor({ open, onOpenChange, question, onSave }: Questio
   const handleSave = async () => {
     setLoading(true)
     try {
+      let optionsValue = null
+      if (answerType === 'multiple_choice' || answerType === 'checkbox') {
+        optionsValue = options.filter(o => o.trim())
+      } else if (answerType === 'number') {
+        optionsValue = {
+          min: minNumber !== '' ? Number(minNumber) : undefined,
+          max: maxNumber !== '' ? Number(maxNumber) : undefined,
+        }
+      }
+
       await onSave({
         id: question?.id,
         title,
         content: content || null,
         answer_type: answerType,
-        options: (answerType === 'multiple_choice' || answerType === 'checkbox') ? options.filter(o => o.trim()) : null,
+        options: optionsValue,
         required,
         order: question?.order || 0,
       })
@@ -111,12 +127,41 @@ export function QuestionEditor({ open, onOpenChange, question, onSave }: Questio
               <SelectContent>
                 <SelectItem value="short_text">짧은 텍스트</SelectItem>
                 <SelectItem value="long_text">긴 텍스트</SelectItem>
+                <SelectItem value="number">숫자</SelectItem>
                 <SelectItem value="multiple_choice">객관식</SelectItem>
                 <SelectItem value="checkbox">체크박스</SelectItem>
                 <SelectItem value="file_upload">파일 업로드</SelectItem>
               </SelectContent>
             </Select>
           </div>
+
+          {answerType === 'number' && (
+            <div className="space-y-2">
+              <Label>숫자 범위 (선택사항)</Label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="minNumber">최솟값</Label>
+                  <Input
+                    id="minNumber"
+                    type="number"
+                    value={minNumber}
+                    onChange={(e) => setMinNumber(e.target.value)}
+                    placeholder="제한 없음"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="maxNumber">최댓값</Label>
+                  <Input
+                    id="maxNumber"
+                    type="number"
+                    value={maxNumber}
+                    onChange={(e) => setMaxNumber(e.target.value)}
+                    placeholder="제한 없음"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           {(answerType === 'multiple_choice' || answerType === 'checkbox') && (
             <div className="space-y-2">

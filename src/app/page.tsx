@@ -1,9 +1,14 @@
+'use client'
+
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { UserMenu } from '@/components/UserMenu'
+import { useAuth } from '@/lib/hooks/useAuth'
 import { FileText, Users, Shield, Code } from 'lucide-react'
 
 export default function Home() {
+  const { user } = useAuth()
   return (
     <div className="min-h-screen bg-background">
       <div className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
@@ -13,9 +18,13 @@ export default function Home() {
             <h1 className="text-xl font-bold">수원고 Code Lab</h1>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/login">
-              <Button variant="ghost">로그인</Button>
-            </Link>
+            {user ? (
+              <UserMenu userEmail={user.email} />
+            ) : (
+              <Link href="/login">
+                <Button variant="ghost">로그인</Button>
+              </Link>
+            )}
             <ThemeToggle />
           </div>
         </div>

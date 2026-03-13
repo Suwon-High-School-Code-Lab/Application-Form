@@ -43,6 +43,19 @@ export function DynamicFormField({ question, value, onChange }: DynamicFormField
           />
         )
 
+      case 'number':
+        const numberOptions = question.options || {}
+        return (
+          <Input
+            type="number"
+            value={value || ''}
+            onChange={(e) => onChange(e.target.value)}
+            required={question.required}
+            min={numberOptions.min}
+            max={numberOptions.max}
+          />
+        )
+
       case 'multiple_choice':
         const options = Array.isArray(question.options) ? question.options : []
         return (
