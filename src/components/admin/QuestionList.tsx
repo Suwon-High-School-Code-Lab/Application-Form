@@ -22,11 +22,11 @@ interface QuestionListProps {
 }
 
 const answerTypeLabels: Record<AnswerType, string> = {
-  short_text: 'Short Text',
-  long_text: 'Long Text',
-  multiple_choice: 'Multiple Choice',
-  checkbox: 'Checkbox',
-  file_upload: 'File Upload',
+  short_text: '짧은 텍스트',
+  long_text: '긴 텍스트',
+  multiple_choice: '객관식',
+  checkbox: '체크박스',
+  file_upload: '파일 업로드',
 }
 
 export function QuestionList({ questions, onEdit, onDelete }: QuestionListProps) {
@@ -35,7 +35,7 @@ export function QuestionList({ questions, onEdit, onDelete }: QuestionListProps)
       {questions.length === 0 ? (
         <Card>
           <CardContent className="py-8 text-center text-muted-foreground">
-            No questions yet. Click "Add Question" to create one.
+            아직 질문이 없습니다. "질문 추가" 버튼을 클릭하여 질문을 만드세요.
           </CardContent>
         </Card>
       ) : (
@@ -69,7 +69,7 @@ export function QuestionList({ questions, onEdit, onDelete }: QuestionListProps)
             <CardContent>
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  Type: {answerTypeLabels[question.answer_type]}
+                  유형: {answerTypeLabels[question.answer_type]}
                 </p>
                 {question.content && (
                   <p className="text-sm text-muted-foreground">
@@ -80,7 +80,7 @@ export function QuestionList({ questions, onEdit, onDelete }: QuestionListProps)
                 {(question.answer_type === 'multiple_choice' || question.answer_type === 'checkbox') &&
                   question.options && (
                     <div className="text-sm text-muted-foreground">
-                      Options: {Array.isArray(question.options) ? question.options.join(', ') : ''}
+                      선택지: {Array.isArray(question.options) ? question.options.join(', ') : ''}
                     </div>
                   )}
               </div>

@@ -74,60 +74,60 @@ export function QuestionEditor({ open, onOpenChange, question, onSave }: Questio
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{question ? 'Edit Question' : 'Add Question'}</DialogTitle>
+          <DialogTitle>{question ? '질문 수정' : '질문 추가'}</DialogTitle>
           <DialogDescription>
-            Create or edit a form question. Use markdown in the content field for rich formatting.
+            지원서 질문을 생성하거나 수정합니다. 내용 필드에서 마크다운을 사용할 수 있습니다.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Question Title *</Label>
+            <Label htmlFor="title">질문 제목 *</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter question title"
+              placeholder="질문 제목을 입력하세요"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="content">Content (Markdown)</Label>
+            <Label htmlFor="content">내용 (마크다운)</Label>
             <Textarea
               id="content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Optional additional content or instructions"
+              placeholder="추가 설명이나 안내사항 (선택사항)"
               rows={4}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="answerType">Answer Type *</Label>
+            <Label htmlFor="answerType">답변 유형 *</Label>
             <Select value={answerType} onValueChange={(value) => setAnswerType(value as AnswerType)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="short_text">Short Text</SelectItem>
-                <SelectItem value="long_text">Long Text</SelectItem>
-                <SelectItem value="multiple_choice">Multiple Choice</SelectItem>
-                <SelectItem value="checkbox">Checkbox</SelectItem>
-                <SelectItem value="file_upload">File Upload</SelectItem>
+                <SelectItem value="short_text">짧은 텍스트</SelectItem>
+                <SelectItem value="long_text">긴 텍스트</SelectItem>
+                <SelectItem value="multiple_choice">객관식</SelectItem>
+                <SelectItem value="checkbox">체크박스</SelectItem>
+                <SelectItem value="file_upload">파일 업로드</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {(answerType === 'multiple_choice' || answerType === 'checkbox') && (
             <div className="space-y-2">
-              <Label>Options</Label>
+              <Label>선택지</Label>
               <div className="space-y-2">
                 {options.map((option, index) => (
                   <div key={index} className="flex gap-2">
                     <Input
                       value={option}
                       onChange={(e) => handleOptionChange(index, e.target.value)}
-                      placeholder={`Option ${index + 1}`}
+                      placeholder={`선택지 ${index + 1}`}
                     />
                     <Button
                       type="button"
@@ -140,7 +140,7 @@ export function QuestionEditor({ open, onOpenChange, question, onSave }: Questio
                   </div>
                 ))}
                 <Button type="button" variant="outline" onClick={handleAddOption}>
-                  Add Option
+                  선택지 추가
                 </Button>
               </div>
             </div>
@@ -152,16 +152,16 @@ export function QuestionEditor({ open, onOpenChange, question, onSave }: Questio
               checked={required}
               onCheckedChange={setRequired}
             />
-            <Label htmlFor="required">Required</Label>
+            <Label htmlFor="required">필수 항목</Label>
           </div>
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            취소
           </Button>
           <Button onClick={handleSave} disabled={loading || !title}>
-            {loading ? 'Saving...' : 'Save'}
+            {loading ? '저장 중...' : '저장'}
           </Button>
         </DialogFooter>
       </DialogContent>

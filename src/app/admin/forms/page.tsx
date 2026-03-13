@@ -108,24 +108,24 @@ export default function FormsPage() {
   }
 
   if (loading) {
-    return <div>Loading...</div>
+    return <div className="flex items-center justify-center min-h-[400px]">로딩 중...</div>
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Form Builder</h1>
-          <p className="text-muted-foreground">Create and manage application form questions</p>
+          <h1 className="text-3xl font-bold">지원서 양식 관리</h1>
+          <p className="text-muted-foreground">Code Lab 지원서 질문을 생성하고 관리하세요</p>
         </div>
-        <Button onClick={handleAddNew}>
+        <Button onClick={handleAddNew} className="hover:scale-105 transition-transform">
           <Plus className="mr-2 h-4 w-4" />
-          Add Question
+          질문 추가
         </Button>
       </div>
 
       {error && (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="animate-fade-in">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}

@@ -23,12 +23,12 @@ export function SignupForm() {
     setError('')
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
+      setError('비밀번호가 일치하지 않습니다')
       return
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters')
+      setError('비밀번호는 최소 6자 이상이어야 합니다')
       return
     }
 
@@ -44,32 +44,32 @@ export function SignupForm() {
 
       router.push('/login')
     } catch (err: any) {
-      setError(err.message || 'An error occurred during signup')
+      setError(err.message || '회원가입 중 오류가 발생했습니다')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md animate-scale-in">
       <CardHeader>
-        <CardTitle>Sign Up</CardTitle>
-        <CardDescription>Create a new account to apply</CardDescription>
+        <CardTitle>회원가입</CardTitle>
+        <CardDescription>Code Lab 지원을 위한 계정을 만드세요</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSignup} className="space-y-4">
           {error && (
-            <Alert variant="destructive">
+            <Alert variant="destructive" className="animate-fade-in">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
           
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">이메일</Label>
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder="your@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -77,7 +77,7 @@ export function SignupForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">비밀번호</Label>
             <Input
               id="password"
               type="password"
@@ -88,7 +88,7 @@ export function SignupForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword">비밀번호 확인</Label>
             <Input
               id="confirmPassword"
               type="password"
@@ -99,7 +99,7 @@ export function SignupForm() {
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Creating account...' : 'Sign Up'}
+            {loading ? '계정 생성 중...' : '회원가입'}
           </Button>
         </form>
       </CardContent>

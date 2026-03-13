@@ -23,42 +23,43 @@ export function LoginForm() {
     setLoading(true)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
       if (error) throw error
-
-      router.push('/')
-      router.refresh()
+      
+      if (data.session) {
+        window.location.href = '/'
+      }
     } catch (err: any) {
-      setError(err.message || 'An error occurred during login')
+      setError(err.message || '로그인 중 오류가 발생했습니다')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md animate-scale-in">
       <CardHeader>
-        <CardTitle>Login</CardTitle>
-        <CardDescription>Enter your credentials to access your account</CardDescription>
+        <CardTitle>로그인</CardTitle>
+        <CardDescription>Code Lab 지원 시스템에 로그인하세요</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleLogin} className="space-y-4">
           {error && (
-            <Alert variant="destructive">
+            <Alert variant="destructive" className="animate-fade-in">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
           
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">이메일</Label>
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder="your@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -66,7 +67,7 @@ export function LoginForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">비밀번호</Label>
             <Input
               id="password"
               type="password"
@@ -77,7 +78,7 @@ export function LoginForm() {
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? '로그인 중...' : '로그인'}
           </Button>
         </form>
       </CardContent>

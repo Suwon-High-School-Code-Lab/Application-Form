@@ -83,7 +83,7 @@ export default function ApplyPage() {
   const validateForm = () => {
     for (const question of questions) {
       if (question.required && !answers[question.id]) {
-        setError(`Please answer: ${question.title}`)
+        setError(`필수 항목을 입력해주세요: ${question.title}`)
         return false
       }
     }
@@ -126,7 +126,7 @@ export default function ApplyPage() {
         if (error) throw error
       }
 
-      alert('Draft saved successfully!')
+      alert('임시 저장되었습니다!')
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -192,7 +192,7 @@ export default function ApplyPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Loading form...</p>
+        <p>지원서를 불러오는 중...</p>
       </div>
     )
   }
@@ -200,11 +200,11 @@ export default function ApplyPage() {
   if (success) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="max-w-md">
+        <Card className="max-w-md animate-scale-in">
           <CardHeader>
-            <CardTitle>Application Submitted!</CardTitle>
+            <CardTitle>지원서가 제출되었습니다!</CardTitle>
             <CardDescription>
-              Your application has been successfully submitted. Redirecting to results...
+              지원서가 성공적으로 제출되었습니다. 결과 페이지로 이동합니다...
             </CardDescription>
           </CardHeader>
         </Card>
@@ -214,19 +214,19 @@ export default function ApplyPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b bg-card">
+      <div className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto flex items-center justify-between p-4">
           <Link href="/">
-            <h1 className="text-xl font-bold">Application Form</h1>
+            <h1 className="text-xl font-bold">수원고 Code Lab 지원서</h1>
           </Link>
           <div className="flex items-center gap-4">
             {user ? (
               <Link href="/results">
-                <Button variant="ghost">View Results</Button>
+                <Button variant="ghost">결과 확인</Button>
               </Link>
             ) : (
               <Link href="/login">
-                <Button variant="ghost">Login</Button>
+                <Button variant="ghost">로그인</Button>
               </Link>
             )}
             <ThemeToggle />
@@ -235,17 +235,17 @@ export default function ApplyPage() {
       </div>
 
       <div className="container mx-auto max-w-3xl p-8">
-        <Card>
+        <Card className="animate-fade-in">
           <CardHeader>
-            <CardTitle>Application Form</CardTitle>
+            <CardTitle>Code Lab 지원서</CardTitle>
             <CardDescription>
-              Please fill out all required fields marked with *
+              * 표시가 있는 모든 필수 항목을 작성해주세요
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <Alert variant="destructive">
+                <Alert variant="destructive" className="animate-fade-in">
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
@@ -265,11 +265,12 @@ export default function ApplyPage() {
                   variant="outline"
                   onClick={handleSaveDraft}
                   disabled={submitting}
+                  className="hover:scale-105 transition-transform"
                 >
-                  Save Draft
+                  임시 저장
                 </Button>
-                <Button type="submit" disabled={submitting}>
-                  {submitting ? 'Submitting...' : 'Submit Application'}
+                <Button type="submit" disabled={submitting} className="hover:scale-105 transition-transform">
+                  {submitting ? '제출 중...' : '지원서 제출'}
                 </Button>
               </div>
             </form>
