@@ -14,6 +14,7 @@ export function SignupForm() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const supabase = createClient()
@@ -42,12 +43,47 @@ export function SignupForm() {
 
       if (error) throw error
 
-      router.push('/login')
+      setSuccess(true)
     } catch (err: any) {
       setError(err.message || '회원가입 중 오류가 발생했습니다')
     } finally {
       setLoading(false)
     }
+  }
+
+  if (success) {
+    return (
+      <Card className="w-full max-w-md animate-scale-in">
+        <CardHeader>
+          <CardTitle>회원가입 완료</CardTitle>
+          <CardDescription>이메일 인증이 필요합니다</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Alert className="animate-fade-in">
+            <AlertDescription>
+              <p className="font-medium mb-2">가입해주셔서 감사합니다!</p>
+              <p className="text-sm">
+                <strong>{email}</strong>로 인증 이메일이 발송되었습니다.
+                이메일을 확인하고 인증 링크를 클릭해주세요.
+              </p>
+            </AlertDescription>
+          </Alert>
+          <Alert className="animate-fade-in">
+            <AlertDescription>
+              <p className="text-sm">
+                이메일 인증을 완료하신 후 로그인해주세요.
+              </p>
+            </AlertDescription>
+          </Alert>
+          <Button 
+            onClick={() => router.push('/login')} 
+            className="w-full"
+          >
+            로그인 페이지로 이동
+          </Button>
+        </CardContent>
+      </Card>
+    )
   }
 
   return (
