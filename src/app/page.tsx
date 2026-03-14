@@ -94,7 +94,7 @@ export default function Home() {
 
       <footer className="border-t mt-16">
         <div className="container mx-auto px-4 py-8 text-center text-sm text-muted-foreground">
-          <p>© 2024 수원고등학교 Code Lab. Built with Next.js and Supabase.</p>
+          <p>© 2026 수원고등학교 Code Lab. Built with Next.js and Supabase.</p>
         </div>
       </footer>
     </div>
