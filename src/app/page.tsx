@@ -42,18 +42,6 @@ export default function Home() {
             코딩과 컴퓨터 공학을 좋아하는 학생들을 위한 동아리입니다. <br />
             온라인 지원서를 작성하고 결과를 확인할 수 있습니다.
           </p>
-          <div className="flex gap-4 justify-center pt-4">
-            <Link href="/apply">
-              <Button size="lg" className="hover:scale-105 transition-transform">
-                지원서 작성하기
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button size="lg" variant="outline" className="hover:scale-105 transition-transform">
-                회원가입
-              </Button>
-            </Link>
-          </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 mt-16">
