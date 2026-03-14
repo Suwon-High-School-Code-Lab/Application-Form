@@ -60,35 +60,17 @@ export default function Home() {
 
         <div className="mt-16 p-8 rounded-lg border bg-gradient-to-br from-card to-muted/20 text-center animate-scale-in">
           <h3 className="text-2xl font-semibold mb-4">Code Lab 지원하기!</h3>
-          {user ? (
-            <>
-              <p className="text-muted-foreground mb-6">
-                Code Lab 지원을 위해 설문지를 작성해주세요!
-              </p>
-              <div className="flex gap-4 justify-center">
-                <Link href="/apply">
-                  <Button className="hover:scale-105 transition-transform">지원서 작성하기</Button>
-                </Link>
-                <Link href="/results">
-                  <Button variant="outline" className="hover:scale-105 transition-transform">지원 결과 확인하기</Button>
-                </Link>
-              </div>
-            </>
-          ) : (
-            <>
-              <p className="text-muted-foreground mb-6">
-                Code Lab 지원을 위해 회원가입 또는 로그인 해주세요
-              </p>
-              <div className="flex gap-4 justify-center">
-                <Link href="/signup">
-                  <Button className="hover:scale-105 transition-transform">회원가입</Button>
-                </Link>
-                <Link href="/login">
-                  <Button variant="outline" className="hover:scale-105 transition-transform">로그인</Button>
-                </Link>
-              </div>
-            </>
-          )}
+          <p className="text-muted-foreground mb-6">
+            Code Lab 지원을 위해 설문지를 작성해주세요!
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Link href="/apply">
+              <Button size="lg" className="hover:scale-105 transition-transform">지원서 작성하기</Button>
+            </Link>
+            <Link href="/results">
+              <Button size="lg" variant="secondary" className="hover:scale-105 transition-transform">지원 결과 확인하기</Button>
+            </Link>
+          </div>
         </div>
       </main>
 
