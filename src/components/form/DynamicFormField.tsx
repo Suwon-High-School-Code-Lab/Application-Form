@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Checkbox } from '@/components/ui/checkbox'
 import { AnswerType } from '@/lib/types/database.types'
-import ReactMarkdown from 'react-markdown'
+import { Markdown } from '@/components/ui/markdown'
 
 interface DynamicFormFieldProps {
   question: {
@@ -121,9 +121,7 @@ export function DynamicFormField({ question, value, onChange }: DynamicFormField
       </Label>
       
       {question.content && (
-        <div className="prose prose-sm dark:prose-invert max-w-none">
-          <ReactMarkdown>{question.content}</ReactMarkdown>
-        </div>
+        <Markdown>{question.content}</Markdown>
       )}
       
       {renderField()}
