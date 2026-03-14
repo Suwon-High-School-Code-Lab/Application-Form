@@ -6,9 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { ThemeToggle } from '@/components/ThemeToggle'
-import { UserMenu } from '@/components/UserMenu'
-import { Button } from '@/components/ui/button'
+import { Navbar } from '@/components/Navbar'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 
@@ -118,25 +116,7 @@ export default function ResultsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto flex items-center justify-between p-4">
-          <Link href="/">
-            <h1 className="text-xl font-bold">지원 결과</h1>
-          </Link>
-          <div className="flex items-center gap-4">
-            {isAdmin && (
-              <Link href="/admin/forms">
-                <Button variant="ghost">관리자 패널</Button>
-              </Link>
-            )}
-            <Link href="/apply">
-              <Button variant="ghost">지원서 작성</Button>
-            </Link>
-            <UserMenu userEmail={user?.email} />
-            <ThemeToggle />
-          </div>
-        </div>
-      </div>
+      <Navbar />
 
       <div className="container mx-auto max-w-5xl p-8">
         <div className="mb-6 animate-fade-in">

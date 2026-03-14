@@ -2,33 +2,15 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ThemeToggle } from '@/components/ThemeToggle'
-import { UserMenu } from '@/components/UserMenu'
+import { Navbar } from '@/components/Navbar'
 import { useAuth } from '@/lib/hooks/useAuth'
-import { FileText, Users, Shield, Code } from 'lucide-react'
+import { FileText, Users, Shield } from 'lucide-react'
 
 export default function Home() {
   const { user } = useAuth()
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto flex items-center justify-between p-4">
-          <div className="flex items-center gap-2">
-            <Code className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-bold">수원고 Code Lab</h1>
-          </div>
-          <div className="flex items-center gap-4">
-            {user ? (
-              <UserMenu userEmail={user.email} />
-            ) : (
-              <Link href="/login">
-                <Button variant="ghost">로그인</Button>
-              </Link>
-            )}
-            <ThemeToggle />
-          </div>
-        </div>
-      </div>
+      <Navbar />
 
       <main className="container mx-auto max-w-5xl px-4 py-16">
         <div className="text-center space-y-6 mb-16 animate-fade-in">
