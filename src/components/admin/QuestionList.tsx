@@ -3,17 +3,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Edit, Trash2, GripVertical } from 'lucide-react'
-import { AnswerType } from '@/lib/types/database.types'
+import { AnswerType, Database } from '@/lib/types/database.types'
 
-interface Question {
-  id: string
-  order: number
-  title: string
-  content: string | null
-  answer_type: AnswerType
-  options: any
-  required: boolean
-}
+type Question = Database['public']['Tables']['form_questions']['Row']
 
 interface QuestionListProps {
   questions: Question[]
@@ -24,6 +16,7 @@ interface QuestionListProps {
 const answerTypeLabels: Record<AnswerType, string> = {
   short_text: '짧은 텍스트',
   long_text: '긴 텍스트',
+  number: '숫자',
   multiple_choice: '객관식',
   checkbox: '체크박스',
   file_upload: '파일 업로드',

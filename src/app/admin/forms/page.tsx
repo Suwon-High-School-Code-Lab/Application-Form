@@ -7,23 +7,16 @@ import { QuestionEditor } from '@/components/admin/QuestionEditor'
 import { QuestionList } from '@/components/admin/QuestionList'
 import { Plus } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Database } from '@/lib/types/database.types'
 
-interface Question {
-  id: string
-  order: number
-  title: string
-  content: string | null
-  answer_type: 'short_text' | 'long_text' | 'multiple_choice' | 'checkbox' | 'file_upload'
-  options: any
-  required: boolean
-}
+type Question = Database['public']['Tables']['form_questions']['Row']
 
 export default function FormsPage() {
   const [questions, setQuestions] = useState<Question[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [editorOpen, setEditorOpen] = useState(false)
-  const [editingQuestion, setEditingQuestion] = useState<Question | undefined>()
+  const [editingQuestion, setEditingQuestion] = useState<Omit<Question, 'created_at' | 'updated_at'> | undefined>()
   const supabase = createClient()
 
   useEffect(() => {
@@ -82,7 +75,8 @@ export default function FormsPage() {
   }
 
   const handleEdit = (question: Question) => {
-    setEditingQuestion(question)
+    const { created_at, updated_at, ...questionWithoutTimestamps } = question
+    setEditingQuestion(questionWithoutTimestamps)
     setEditorOpen(true)
   }
 

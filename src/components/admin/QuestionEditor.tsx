@@ -8,21 +8,15 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { AnswerType } from '@/lib/types/database.types'
+import { AnswerType, Database } from '@/lib/types/database.types'
 import { X } from 'lucide-react'
+
+type Question = Database['public']['Tables']['form_questions']['Row']
 
 interface QuestionEditorProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  question?: {
-    id: string
-    order: number
-    title: string
-    content: string | null
-    answer_type: AnswerType
-    options: any
-    required: boolean
-  }
+  question?: Omit<Question, 'created_at' | 'updated_at'>
   onSave: (question: any) => Promise<void>
 }
 
@@ -31,13 +25,13 @@ export function QuestionEditor({ open, onOpenChange, question, onSave }: Questio
   const [content, setContent] = useState(question?.content || '')
   const [answerType, setAnswerType] = useState<AnswerType>(question?.answer_type || 'short_text')
   const [options, setOptions] = useState<string[]>(
-    question?.options ? (Array.isArray(question.options) ? question.options : []) : []
+    question?.options && Array.isArray(question.options) ? (question.options as string[]) : []
   )
   const [minNumber, setMinNumber] = useState<string>(
-    question?.options?.min !== undefined ? String(question.options.min) : ''
+    question?.options && typeof question.options === 'object' && !Array.isArray(question.options) && 'min' in question.options && question.options.min !== undefined ? String(question.options.min) : ''
   )
   const [maxNumber, setMaxNumber] = useState<string>(
-    question?.options?.max !== undefined ? String(question.options.max) : ''
+    question?.options && typeof question.options === 'object' && !Array.isArray(question.options) && 'max' in question.options && question.options.max !== undefined ? String(question.options.max) : ''
   )
   const [required, setRequired] = useState(question?.required ?? true)
   const [loading, setLoading] = useState(false)
