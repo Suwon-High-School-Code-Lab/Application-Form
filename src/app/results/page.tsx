@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Navbar } from '@/components/Navbar'
 import Link from 'next/link'
-import ReactMarkdown from 'react-markdown'
+import { Markdown } from '@/components/ui/markdown'
 
 interface Question {
   id: string
@@ -175,9 +175,7 @@ export default function ResultsPage() {
                       <div key={questionId} className="space-y-2">
                         <h4 className="font-medium">{question.title}</h4>
                         {question.content && (
-                          <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground">
-                            <ReactMarkdown>{question.content}</ReactMarkdown>
-                          </div>
+                          <Markdown className="text-muted-foreground">{question.content}</Markdown>
                         )}
                         <p className="text-sm bg-muted/50 p-3 rounded-md">
                           {formatAnswer(questionId, answer)}
