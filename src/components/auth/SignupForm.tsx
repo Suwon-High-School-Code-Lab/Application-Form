@@ -87,22 +87,16 @@ export function SignupForm() {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-      })
-
-      if (error) throw error
-
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({
+        options: {
+          data: {
             grade: gradeNum,
             class: classNumber,
             student_number: studentNum,
-          })
-          .eq('id', data.user.id)
+          }
+        }
+      })
 
-        if (profileError) throw profileError
-      }
+      if (error) throw error
 
       setSuccess(true)
     } catch (err: any) {

@@ -164,8 +164,14 @@ CREATE POLICY "Users can update their own submissions"
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, email)
-  VALUES (new.id, new.email);
+  INSERT INTO public.profiles (id, email, grade, class, student_number)
+  VALUES (
+    new.id,
+    new.email,
+    (new.raw_user_meta_data->>'grade')::INTEGER,
+    (new.raw_user_meta_data->>'class')::INTEGER,
+    (new.raw_user_meta_data->>'student_number')::INTEGER
+  );
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
