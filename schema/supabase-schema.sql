@@ -64,17 +64,32 @@ ALTER TABLE form_questions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE form_submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
 
+-- Grant base privileges required by PostgREST;
+GRANT USAGE ON SCHEMA public TO authenticated;
+GRANT SELECT, INSERT, UPDATE ON public.profiles TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.form_questions TO authenticated;
+GRANT SELECT, UPDATE ON public.settings TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.form_submissions TO authenticated;
+GRANT USAGE ON SCHEMA auth TO authenticated;
+GRANT USAGE ON SCHEMA extensions TO authenticated;
+
 -- Profiles policies
 CREATE POLICY "Users can view their own profile"
-  ON profiles FOR SELECT
+  ON profiles
+  FOR SELECT
+  TO authenticated
   USING (auth.uid() = id);
 
 CREATE POLICY "Users can insert their own profile"
-  ON profiles FOR INSERT
+  ON profiles
+  FOR INSERT
+  TO authenticated
   WITH CHECK (auth.uid() = id);
 
 CREATE POLICY "Users can update their own profile"
-  ON profiles FOR UPDATE
+  ON profiles
+  FOR UPDATE
+  TO authenticated
   USING (auth.uid() = id);
 
 -- Settings policies
@@ -162,7 +177,11 @@ CREATE POLICY "Users can update their own submissions"
 
 -- Function to automatically create profile on signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
   INSERT INTO public.profiles (id, email, grade, class, student_number)
   VALUES (
@@ -174,7 +193,7 @@ BEGIN
   );
   RETURN new;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 -- Trigger to create profile on user signup
 CREATE TRIGGER on_auth_user_created
@@ -183,12 +202,14 @@ CREATE TRIGGER on_auth_user_created
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
 BEGIN
   NEW.updated_at = TIMEZONE('utc'::text, NOW());
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 -- Trigger to update updated_at on form_questions
 CREATE TRIGGER update_form_questions_updated_at
