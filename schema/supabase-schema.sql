@@ -1,5 +1,5 @@
 -- Create custom types
-CREATE TYPE answer_type AS ENUM ('short_text', 'long_text', 'multiple_choice', 'checkbox', 'file_upload');
+CREATE TYPE answer_type AS ENUM ('short_text', 'long_text', 'number', 'multiple_choice', 'checkbox', 'file_upload');
 CREATE TYPE submission_status AS ENUM ('draft', 'submitted');
 CREATE TYPE user_role AS ENUM ('user', 'admin');
 
