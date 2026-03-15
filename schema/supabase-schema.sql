@@ -48,7 +48,8 @@ CREATE TABLE form_submissions (
   user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
   answers JSONB NOT NULL,
   submitted_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
-  status submission_status DEFAULT 'draft' NOT NULL
+  status submission_status DEFAULT 'draft' NOT NULL,
+  CONSTRAINT unique_user_submission UNIQUE (user_id)
 );
 
 -- Create indexes

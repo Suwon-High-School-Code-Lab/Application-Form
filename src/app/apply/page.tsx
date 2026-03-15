@@ -67,10 +67,13 @@ export default function ApplyPage() {
         .from('form_submissions')
         .select('*')
         .eq('user_id', user.id)
-        .eq('status', 'draft')
         .single()
 
       if (data) {
+        if (data.status === 'submitted') {
+          router.push('/results')
+          return
+        }
         setAnswers(data.answers as Record<string, any>)
       }
     } catch (err) {

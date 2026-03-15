@@ -17,18 +17,27 @@ export interface Database {
         Row: {
           id: string
           email: string
+          grade: number | null
+          class: number | null
+          student_number: number | null
           role: UserRole
           created_at: string
         }
         Insert: {
           id: string
           email: string
+          grade?: number | null
+          class?: number | null
+          student_number?: number | null
           role?: UserRole
           created_at?: string
         }
         Update: {
           id?: string
           email?: string
+          grade?: number | null
+          class?: number | null
+          student_number?: number | null
           role?: UserRole
           created_at?: string
         }
