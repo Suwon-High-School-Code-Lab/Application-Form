@@ -3,18 +3,13 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { SettingsFormProps } from '@/lib/types/settings.types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Save } from 'lucide-react'
-
-interface SettingsFormProps {
-  maxGrade: number
-  maxClass: number
-  maxStudentNumber: number
-}
 
 export function SettingsForm({ maxGrade: initialMaxGrade, maxClass: initialMaxClass, maxStudentNumber: initialMaxStudentNumber }: SettingsFormProps) {
   const [maxGrade, setMaxGrade] = useState(initialMaxGrade.toString())
