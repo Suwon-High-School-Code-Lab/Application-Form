@@ -6,8 +6,12 @@ CREATE TYPE submission_status AS ENUM ('draft', 'submitted');
 CREATE TABLE profiles (
   id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
   email TEXT NOT NULL,
+  grade INTEGER,
+  class INTEGER,
+  student_number INTEGER,
   is_admin BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+  CONSTRAINT unique_student_identifier UNIQUE (grade, class, student_number)
 );
 
 -- Create form_questions table
@@ -23,6 +27,20 @@ CREATE TABLE form_questions (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
+-- Create settings table
+CREATE TABLE settings (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  key TEXT UNIQUE NOT NULL,
+  value INTEGER NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+-- Insert default settings
+INSERT INTO settings (key, value) VALUES
+  ('max_grade', 3),
+  ('max_class', 20),
+  ('max_student_number', 50);
+
 -- Create form_submissions table
 CREATE TABLE form_submissions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -36,11 +54,13 @@ CREATE TABLE form_submissions (
 CREATE INDEX idx_form_questions_order ON form_questions("order");
 CREATE INDEX idx_form_submissions_user_id ON form_submissions(user_id);
 CREATE INDEX idx_form_submissions_status ON form_submissions(status);
+CREATE INDEX idx_profiles_student_identifier ON profiles(grade, class, student_number);
 
 -- Enable Row Level Security
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE form_questions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE form_submissions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
 
 -- Profiles policies
 CREATE POLICY "Users can view their own profile"
@@ -50,6 +70,23 @@ CREATE POLICY "Users can view their own profile"
 CREATE POLICY "Users can update their own profile"
   ON profiles FOR UPDATE
   USING (auth.uid() = id);
+
+-- Settings policies
+CREATE POLICY "Anyone can view settings"
+  ON settings FOR SELECT
+  TO authenticated
+  USING (true);
+
+CREATE POLICY "Only admins can update settings"
+  ON settings FOR UPDATE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles
+      WHERE profiles.id = auth.uid()
+      AND profiles.is_admin = true
+    )
+  );
 
 -- Form questions policies
 CREATE POLICY "Anyone can view form questions"

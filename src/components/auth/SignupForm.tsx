@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -13,11 +13,35 @@ export function SignupForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [grade, setGrade] = useState('')
+  const [classNum, setClassNum] = useState('')
+  const [studentNumber, setStudentNumber] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [maxGrade, setMaxGrade] = useState(3)
+  const [maxClass, setMaxClass] = useState(20)
+  const [maxStudentNumber, setMaxStudentNumber] = useState(50)
   const router = useRouter()
   const supabase = createClient()
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const { data } = await supabase
+        .from('settings')
+        .select('key, value')
+        .in('key', ['max_grade', 'max_class', 'max_student_number'])
+
+      if (data) {
+        data.forEach(setting => {
+          if (setting.key === 'max_grade') setMaxGrade(setting.value)
+          if (setting.key === 'max_class') setMaxClass(setting.value)
+          if (setting.key === 'max_student_number') setMaxStudentNumber(setting.value)
+        })
+      }
+    }
+    fetchSettings()
+  }, [])
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,19 +57,60 @@ export function SignupForm() {
       return
     }
 
+    if (!grade || !classNum || !studentNumber) {
+      setError('학년, 반, 번호를 모두 입력해주세요')
+      return
+    }
+
+    const gradeNum = parseInt(grade)
+    const classNumber = parseInt(classNum)
+    const studentNum = parseInt(studentNumber)
+
+    if (gradeNum < 1 || gradeNum > maxGrade) {
+      setError(`학년은 1~${maxGrade} 사이의 숫자여야 합니다`)
+      return
+    }
+
+    if (classNumber < 1 || classNumber > maxClass) {
+      setError(`반은 1~${maxClass} 사이의 숫자여야 합니다`)
+      return
+    }
+
+    if (studentNum < 1 || studentNum > maxStudentNumber) {
+      setError(`번호는 1~${maxStudentNumber} 사이의 숫자여야 합니다`)
+      return
+    }
+
     setLoading(true)
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
       })
 
       if (error) throw error
 
+      if (data.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            grade: gradeNum,
+            class: classNumber,
+            student_number: studentNum,
+          })
+          .eq('id', data.user.id)
+
+        if (profileError) throw profileError
+      }
+
       setSuccess(true)
     } catch (err: any) {
-      setError(err.message || '회원가입 중 오류가 발생했습니다')
+      if (err.message?.includes('unique_student_identifier')) {
+        setError(`${gradeNum}학년 ${classNumber}반 ${studentNum}번은 이미 등록된 학생 정보입니다. 다른 정보를 입력해주세요.`)
+      } else {
+        setError(err.message || '회원가입 중 오류가 발생했습니다')
+      }
     } finally {
       setLoading(false)
     }
@@ -110,6 +175,48 @@ export function SignupForm() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="grade">학년</Label>
+              <Input
+                id="grade"
+                type="number"
+                placeholder="1"
+                min="1"
+                max="3"
+                value={grade}
+                onChange={(e) => setGrade(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="class">반</Label>
+              <Input
+                id="class"
+                type="number"
+                placeholder="1"
+                min="1"
+                max="20"
+                value={classNum}
+                onChange={(e) => setClassNum(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="studentNumber">번호</Label>
+              <Input
+                id="studentNumber"
+                type="number"
+                placeholder="1"
+                min="1"
+                max="50"
+                value={studentNumber}
+                onChange={(e) => setStudentNumber(e.target.value)}
+                required
+              />
+            </div>
           </div>
 
           <div className="space-y-2">

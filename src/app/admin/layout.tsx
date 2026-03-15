@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Button } from '@/components/ui/button'
-import { LayoutDashboard, FileText, LogOut } from 'lucide-react'
+import { LayoutDashboard, FileText, LogOut, Users, Settings } from 'lucide-react'
 
 export default async function AdminLayout({
   children,
@@ -40,6 +40,18 @@ export default async function AdminLayout({
             <Button variant="ghost" className="w-full justify-start hover:bg-accent transition-colors">
               <FileText className="mr-2 h-4 w-4" />
               지원서 양식 관리
+            </Button>
+          </Link>
+          <Link href="/admin/users">
+            <Button variant="ghost" className="w-full justify-start hover:bg-accent transition-colors">
+              <Users className="mr-2 h-4 w-4" />
+              사용자 관리
+            </Button>
+          </Link>
+          <Link href="/admin/settings">
+            <Button variant="ghost" className="w-full justify-start hover:bg-accent transition-colors">
+              <Settings className="mr-2 h-4 w-4" />
+              시스템 설정
             </Button>
           </Link>
           <Link href="/results">
