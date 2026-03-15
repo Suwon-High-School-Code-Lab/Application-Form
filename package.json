@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "update-supabase-types": "bash scripts/update-supabase-types.sh"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.16",
