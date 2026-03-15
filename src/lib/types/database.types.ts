@@ -8,6 +8,7 @@ export type Json =
 
 export type AnswerType = 'short_text' | 'long_text' | 'number' | 'multiple_choice' | 'checkbox' | 'file_upload'
 export type SubmissionStatus = 'draft' | 'submitted'
+export type UserRole = 'user' | 'admin'
 
 export interface Database {
   public: {
@@ -16,19 +17,19 @@ export interface Database {
         Row: {
           id: string
           email: string
-          is_admin: boolean
+          role: UserRole
           created_at: string
         }
         Insert: {
           id: string
           email: string
-          is_admin?: boolean
+          role?: UserRole
           created_at?: string
         }
         Update: {
           id?: string
           email?: string
-          is_admin?: boolean
+          role?: UserRole
           created_at?: string
         }
       }

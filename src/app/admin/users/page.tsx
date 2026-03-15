@@ -6,7 +6,7 @@ export default async function UsersPage() {
   
   const { data: users, error } = await supabase
     .from('profiles')
-    .select('id, email, grade, class, student_number, is_admin, created_at')
+    .select('id, email, grade, class, student_number, role, created_at')
     .order('created_at', { ascending: false })
 
   if (error) {

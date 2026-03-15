@@ -18,11 +18,11 @@ export function useAuth() {
       if (user) {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('is_admin')
+          .select('role')
           .eq('id', user.id)
           .single()
         
-        setIsAdmin(profile?.is_admin || false)
+        setIsAdmin(profile?.role === 'admin')
       }
       
       setLoading(false)
@@ -37,11 +37,11 @@ export function useAuth() {
         if (session?.user) {
           const { data: profile } = await supabase
             .from('profiles')
-            .select('is_admin')
+            .select('role')
             .eq('id', session.user.id)
             .single()
           
-          setIsAdmin(profile?.is_admin || false)
+          setIsAdmin(profile?.role === 'admin')
         } else {
           setIsAdmin(false)
         }

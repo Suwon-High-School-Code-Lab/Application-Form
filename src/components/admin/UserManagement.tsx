@@ -31,7 +31,7 @@ interface User {
   grade: number | null
   class: number | null
   student_number: number | null
-  is_admin: boolean
+  role: 'user' | 'admin'
   created_at: string
 }
 
@@ -191,7 +191,7 @@ export function UserManagement({ users: initialUsers }: UserManagementProps) {
                     {user.student_number || '-'}
                   </TableCell>
                   <TableCell className="text-center">
-                    {user.is_admin ? '예' : '아니오'}
+                    {user.role === 'admin' ? '예' : '아니오'}
                   </TableCell>
                   <TableCell className="text-center">
                     {new Date(user.created_at).toLocaleDateString('ko-KR')}

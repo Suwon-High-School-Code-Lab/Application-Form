@@ -1,6 +1,7 @@
 -- Create custom types
 CREATE TYPE answer_type AS ENUM ('short_text', 'long_text', 'multiple_choice', 'checkbox', 'file_upload');
 CREATE TYPE submission_status AS ENUM ('draft', 'submitted');
+CREATE TYPE user_role AS ENUM ('user', 'admin');
 
 -- Create profiles table
 CREATE TABLE profiles (
@@ -9,7 +10,7 @@ CREATE TABLE profiles (
   grade INTEGER,
   class INTEGER,
   student_number INTEGER,
-  is_admin BOOLEAN DEFAULT FALSE,
+  role user_role DEFAULT 'user' NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
   CONSTRAINT unique_student_identifier UNIQUE (grade, class, student_number)
 );
@@ -84,7 +85,7 @@ CREATE POLICY "Only admins can update settings"
     EXISTS (
       SELECT 1 FROM profiles
       WHERE profiles.id = auth.uid()
-      AND profiles.is_admin = true
+      AND profiles.role = 'admin'
     )
   );
 
@@ -101,7 +102,7 @@ CREATE POLICY "Only admins can insert form questions"
     EXISTS (
       SELECT 1 FROM profiles
       WHERE profiles.id = auth.uid()
-      AND profiles.is_admin = true
+      AND profiles.role = 'admin'
     )
   );
 
@@ -112,7 +113,7 @@ CREATE POLICY "Only admins can update form questions"
     EXISTS (
       SELECT 1 FROM profiles
       WHERE profiles.id = auth.uid()
-      AND profiles.is_admin = true
+      AND profiles.role = 'admin'
     )
   );
 
@@ -123,7 +124,7 @@ CREATE POLICY "Only admins can delete form questions"
     EXISTS (
       SELECT 1 FROM profiles
       WHERE profiles.id = auth.uid()
-      AND profiles.is_admin = true
+      AND profiles.role = 'admin'
     )
   );
 
@@ -140,7 +141,7 @@ CREATE POLICY "Admins can view all submissions"
     EXISTS (
       SELECT 1 FROM profiles
       WHERE profiles.id = auth.uid()
-      AND profiles.is_admin = true
+      AND profiles.role = 'admin'
     )
   );
 
