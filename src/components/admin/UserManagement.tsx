@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { Database } from '@/lib/types/database.types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -25,15 +26,7 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Edit, Save, X } from 'lucide-react'
 
-interface User {
-  id: string
-  email: string
-  grade: number | null
-  class: number | null
-  student_number: number | null
-  role: 'user' | 'admin'
-  created_at: string
-}
+type User = Database['public']['Tables']['profiles']['Row']
 
 interface UserManagementProps {
   users: User[]

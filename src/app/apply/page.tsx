@@ -4,21 +4,14 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { Database } from '@/lib/types/database.types'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { DynamicFormField } from '@/components/form/DynamicFormField'
 import { Navbar } from '@/components/Navbar'
 
-interface Question {
-  id: string
-  order: number
-  title: string
-  content: string | null
-  answer_type: 'short_text' | 'long_text' | 'number' | 'multiple_choice' | 'checkbox' | 'file_upload'
-  options: any
-  required: boolean
-}
+type Question = Database['public']['Tables']['form_questions']['Row']
 
 export default function ApplyPage() {
   const [questions, setQuestions] = useState<Question[]>([])

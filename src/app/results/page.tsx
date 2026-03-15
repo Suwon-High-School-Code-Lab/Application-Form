@@ -4,25 +4,16 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { Database } from '@/lib/types/database.types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Navbar } from '@/components/Navbar'
 import Link from 'next/link'
 import { Markdown } from '@/components/ui/markdown'
 
-interface Question {
-  id: string
-  title: string
-  content: string | null
-  answer_type: string
-}
+type Question = Pick<Database['public']['Tables']['form_questions']['Row'], 'id' | 'title' | 'content' | 'answer_type'>
 
-interface Submission {
-  id: string
-  user_id: string
-  answers: Record<string, any>
-  submitted_at: string
-  status: string
+type Submission = Database['public']['Tables']['form_submissions']['Row'] & {
   profiles?: {
     email: string
   }
@@ -167,7 +158,7 @@ export default function ResultsPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {Object.entries(submission.answers).map(([questionId, answer]) => {
+                  {Object.entries(submission.answers as Record<string, any>).map(([questionId, answer]) => {
                     const question = questions[questionId]
                     if (!question) return null
 

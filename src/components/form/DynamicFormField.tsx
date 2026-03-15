@@ -5,18 +5,11 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Checkbox } from '@/components/ui/checkbox'
-import { AnswerType } from '@/lib/types/database.types'
+import { Database } from '@/lib/types/database.types'
 import { Markdown } from '@/components/ui/markdown'
 
 interface DynamicFormFieldProps {
-  question: {
-    id: string
-    title: string
-    content: string | null
-    answer_type: AnswerType
-    options: any
-    required: boolean
-  }
+  question: Pick<Database['public']['Tables']['form_questions']['Row'], 'id' | 'title' | 'content' | 'answer_type' | 'options' | 'required'>
   value: any
   onChange: (value: any) => void
 }
@@ -44,7 +37,7 @@ export function DynamicFormField({ question, value, onChange }: DynamicFormField
         )
 
       case 'number':
-        const numberOptions = question.options || {}
+        const numberOptions = (question.options as { min?: number; max?: number }) || {}
         return (
           <Input
             type="number"
@@ -57,10 +50,10 @@ export function DynamicFormField({ question, value, onChange }: DynamicFormField
         )
 
       case 'multiple_choice':
-        const options = Array.isArray(question.options) ? question.options : []
+        const options = Array.isArray(question.options) ? (question.options as string[]) : []
         return (
           <RadioGroup value={value || ''} onValueChange={onChange} required={question.required}>
-            {options.map((option: string, index: number) => (
+            {options.map((option, index) => (
               <div key={index} className="flex items-center space-x-2">
                 <RadioGroupItem value={option} id={`${question.id}-${index}`} />
                 <Label htmlFor={`${question.id}-${index}`}>{option}</Label>
@@ -70,12 +63,12 @@ export function DynamicFormField({ question, value, onChange }: DynamicFormField
         )
 
       case 'checkbox':
-        const checkboxOptions = Array.isArray(question.options) ? question.options : []
+        const checkboxOptions = Array.isArray(question.options) ? (question.options as string[]) : []
         const selectedValues = Array.isArray(value) ? value : []
         
         return (
           <div className="space-y-2">
-            {checkboxOptions.map((option: string, index: number) => (
+            {checkboxOptions.map((option, index) => (
               <div key={index} className="flex items-center space-x-2">
                 <Checkbox
                   id={`${question.id}-${index}`}
