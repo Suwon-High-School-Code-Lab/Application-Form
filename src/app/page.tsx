@@ -58,7 +58,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mt-16 p-8 rounded-lg border bg-gradient-to-br from-card to-muted/20 text-center animate-scale-in">
+        <div className="mt-16 p-8 rounded-lg border bg-linear-to-br from-card to-muted/20 text-center animate-scale-in">
           <h3 className="text-2xl font-semibold mb-4">Code Lab 지원하기!</h3>
           <p className="text-muted-foreground mb-6">
             Code Lab 지원을 위해 설문지를 작성해주세요!
