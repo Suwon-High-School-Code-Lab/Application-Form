@@ -102,6 +102,7 @@ export function SignupForm() {
         email,
         password,
         options: {
+          emailRedirectTo: `${window.location.origin}/auth/confirm`,
           data: {
             grade: gradeNum,
             class: classNumber,
