@@ -13,18 +13,14 @@ import { Markdown } from '@/components/ui/markdown'
 
 type Question = Pick<Database['public']['Tables']['form_questions']['Row'], 'id' | 'title' | 'content' | 'answer_type'>
 
-type Submission = Database['public']['Tables']['form_submissions']['Row'] & {
-  profiles?: {
-    email: string
-  }
-}
+type Submission = Database['public']['Tables']['form_submissions']['Row']
 
 export default function ResultsPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [questions, setQuestions] = useState<Record<string, Question>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const { user, loading: authLoading, isAdmin } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const supabase = createClient()
 
@@ -36,7 +32,7 @@ export default function ResultsPage() {
       return
     }
     fetchData()
-  }, [user, authLoading, isAdmin])
+  }, [user, authLoading])
 
   const fetchData = async () => {
     if (!user) return
@@ -54,31 +50,15 @@ export default function ResultsPage() {
       })
       setQuestions(questionsMap)
 
-      if (isAdmin) {
-        const { data, error } = await supabase
-          .from('form_submissions')
-          .select(`
-            *,
-            profiles (
-              email
-            )
-          `)
-          .eq('status', 'submitted')
-          .order('submitted_at', { ascending: false })
+      const { data, error } = await supabase
+        .from('form_submissions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'submitted')
+        .order('submitted_at', { ascending: false })
 
-        if (error) throw error
-        setSubmissions(data || [])
-      } else {
-        const { data, error } = await supabase
-          .from('form_submissions')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('status', 'submitted')
-          .order('submitted_at', { ascending: false })
-
-        if (error) throw error
-        setSubmissions(data || [])
-      }
+      if (error) throw error
+      setSubmissions(data || [])
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -111,14 +91,8 @@ export default function ResultsPage() {
 
       <div className="container mx-auto max-w-5xl p-8">
         <div className="mb-6 animate-fade-in">
-          <h2 className="text-3xl font-bold">
-            {isAdmin ? '전체 지원 현황' : '내 지원서'}
-          </h2>
-          <p className="text-muted-foreground">
-            {isAdmin
-              ? `총 ${submissions.length}개의 지원서`
-              : '제출한 지원서를 확인하세요'}
-          </p>
+          <h2 className="text-3xl font-bold">내 지원서</h2>
+          <p className="text-muted-foreground">제출한 지원서를 확인하세요</p>
         </div>
 
         {error && (
@@ -131,16 +105,14 @@ export default function ResultsPage() {
           <Card className="animate-scale-in">
             <CardContent className="py-8 text-center">
               <p className="text-muted-foreground mb-4">
-                {isAdmin ? '제출된 지원서가 없습니다.' : '아직 결과가 나오지 않았습니다.'}
+                아직 결과가 나오지 않았습니다.
               </p>
-              {!isAdmin && (
-                <p className="text-sm text-muted-foreground">
-                  지원서를 제출하셨다면 결과 발표를 기다려주세요.{' '}
-                  <Link href="/apply" className="text-primary hover:underline">
-                    지원서 작성하기
-                  </Link>
-                </p>
-              )}
+              <p className="text-sm text-muted-foreground">
+                지원서를 제출하셨다면 결과 발표를 기다려주세요.{' '}
+                <Link href="/apply" className="text-primary hover:underline">
+                  지원서 작성하기
+                </Link>
+              </p>
             </CardContent>
           </Card>
         ) : (
@@ -148,11 +120,7 @@ export default function ResultsPage() {
             {submissions.map((submission, index) => (
               <Card key={submission.id} className="animate-slide-up hover:shadow-lg transition-shadow" style={{ animationDelay: `${index * 0.1}s` }}>
                 <CardHeader>
-                  <CardTitle>
-                    {isAdmin && submission.profiles
-                      ? `${submission.profiles.email}님의 지원서`
-                      : '내 지원서'}
-                  </CardTitle>
+                  <CardTitle>내 지원서</CardTitle>
                   <CardDescription>
                     제출일: {new Date(submission.submitted_at).toLocaleString('ko-KR')}
                   </CardDescription>
