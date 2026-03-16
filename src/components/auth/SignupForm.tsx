@@ -84,6 +84,20 @@ export function SignupForm() {
     setLoading(true)
 
     try {
+      const { data: existingStudent } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('grade', gradeNum)
+        .eq('class', classNumber)
+        .eq('student_number', studentNum)
+        .maybeSingle()
+
+      if (existingStudent) {
+        setError(`${gradeNum}학년 ${classNumber}반 ${studentNum}번은 이미 등록된 학생 정보입니다. 다른 정보를 입력해주세요.`)
+        setLoading(false)
+        return
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
