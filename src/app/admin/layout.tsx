@@ -5,6 +5,8 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { Button } from '@/components/ui/button'
 import { LayoutDashboard, FileText, LogOut, Users, Settings, ClipboardList } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminLayout({
   children,
 }: {
