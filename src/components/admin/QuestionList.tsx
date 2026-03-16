@@ -3,9 +3,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Edit, Trash2, GripVertical } from 'lucide-react'
-import { AnswerType, Database } from '@/lib/types/database.types'
+import { Database } from '@/lib/types/database.types'
 
 type Question = Database['public']['Tables']['form_questions']['Row']
+type AnswerType = Database['public']['Enums']['answer_type']
 
 interface QuestionListProps {
   questions: Question[]

@@ -8,16 +8,17 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { AnswerType, Database } from '@/lib/types/database.types'
+import { Database } from '@/lib/types/database.types'
 import { X } from 'lucide-react'
 
 type Question = Database['public']['Tables']['form_questions']['Row']
+type AnswerType = Database['public']['Enums']['answer_type']
 
 interface QuestionEditorProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   question?: Omit<Question, 'created_at' | 'updated_at'>
-  onSave: (question: any) => Promise<void>
+  onSave: (question: Omit<Question, 'created_at' | 'updated_at'>) => Promise<void>
 }
 
 export function QuestionEditor({ open, onOpenChange, question, onSave }: QuestionEditorProps) {
@@ -64,13 +65,13 @@ export function QuestionEditor({ open, onOpenChange, question, onSave }: Questio
       }
 
       await onSave({
-        id: question?.id,
+        id: question?.id ?? '',
         title,
         content: content || null,
         answer_type: answerType,
         options: optionsValue,
         required,
-        order: question?.order || 0,
+        order: question?.order ?? 0,
       })
       onOpenChange(false)
     } catch (error) {
