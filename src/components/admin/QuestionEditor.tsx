@@ -64,15 +64,20 @@ export function QuestionEditor({ open, onOpenChange, question, onSave }: Questio
         }
       }
 
-      await onSave({
-        id: question?.id ?? '',
+      const questionData: any = {
         title,
         content: content || null,
         answer_type: answerType,
         options: optionsValue,
         required,
         order: question?.order ?? 0,
-      })
+      }
+
+      if (question?.id) {
+        questionData.id = question.id
+      }
+
+      await onSave(questionData)
       onOpenChange(false)
     } catch (error) {
       console.error('Error saving question:', error)
