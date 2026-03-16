@@ -12,20 +12,25 @@ export function useAuth() {
 
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-      
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single()
+      try {
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
         
-        setIsAdmin(profile?.role === 'admin')
+        setUser(user)
+        
+        if (user) {
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single()
+          
+          setIsAdmin(profile?.role === 'admin')
+        }
+        
+        setLoading(false)
+      } catch (err) {
+        setLoading(false)
       }
-      
-      setLoading(false)
     }
 
     getUser()
