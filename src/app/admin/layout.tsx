@@ -60,12 +60,6 @@ export default async function AdminLayout({
               시스템 설정
             </Button>
           </Link>
-          <Link href="/results">
-            <Button variant="ghost" className="w-full justify-start hover:bg-accent transition-colors">
-              <LayoutDashboard className="mr-2 h-4 w-4" />
-              지원 결과 보기
-            </Button>
-          </Link>
         </nav>
 
         <div className="absolute bottom-4 left-4 right-4 space-y-2">
