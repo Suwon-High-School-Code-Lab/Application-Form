@@ -22,7 +22,7 @@ export function DynamicFormField({ question, value, onChange }: DynamicFormField
           <Input
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
-            required={question.required}
+            required={question.required ?? undefined}
           />
         )
 
@@ -31,7 +31,7 @@ export function DynamicFormField({ question, value, onChange }: DynamicFormField
           <Textarea
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
-            required={question.required}
+            required={question.required ?? undefined}
             rows={6}
           />
         )
@@ -43,7 +43,7 @@ export function DynamicFormField({ question, value, onChange }: DynamicFormField
             type="number"
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
-            required={question.required}
+            required={question.required ?? undefined}
             min={numberOptions.min}
             max={numberOptions.max}
           />
@@ -52,7 +52,7 @@ export function DynamicFormField({ question, value, onChange }: DynamicFormField
       case 'multiple_choice':
         const options = Array.isArray(question.options) ? (question.options as string[]) : []
         return (
-          <RadioGroup value={value || ''} onValueChange={onChange} required={question.required}>
+          <RadioGroup value={value || ''} onValueChange={onChange} required={question.required ?? undefined}>
             {options.map((option, index) => (
               <div key={index} className="flex items-center space-x-2">
                 <RadioGroupItem value={option} id={`${question.id}-${index}`} />
@@ -97,7 +97,7 @@ export function DynamicFormField({ question, value, onChange }: DynamicFormField
                 onChange(file.name)
               }
             }}
-            required={question.required}
+            required={question.required ?? undefined}
           />
         )
 
