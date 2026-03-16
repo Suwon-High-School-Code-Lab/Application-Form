@@ -25,6 +25,8 @@ export default function ApplyPage() {
   const supabase = createClient()
 
   useEffect(() => {
+    let isMounted = true
+    
     if (authLoading) return
     
     if (!user) {
@@ -32,11 +34,19 @@ export default function ApplyPage() {
       return
     }
     
-    fetchQuestions()
-    fetchExistingSubmission()
+    const init = async () => {
+      await fetchQuestions(isMounted)
+      await fetchExistingSubmission(isMounted)
+    }
+    
+    init()
+    
+    return () => {
+      isMounted = false
+    }
   }, [user, authLoading])
 
-  const fetchQuestions = async () => {
+  const fetchQuestions = async (isMounted: boolean = true) => {
     try {
       const { data, error } = await supabase
         .from('form_questions')
@@ -44,15 +54,21 @@ export default function ApplyPage() {
         .order('order', { ascending: true })
 
       if (error) throw error
-      setQuestions(data || [])
+      if (isMounted) {
+        setQuestions(data || [])
+      }
     } catch (err: any) {
-      setError(err.message)
+      if (isMounted) {
+        setError(err.message)
+      }
     } finally {
-      setLoading(false)
+      if (isMounted) {
+        setLoading(false)
+      }
     }
   }
 
-  const fetchExistingSubmission = async () => {
+  const fetchExistingSubmission = async (isMounted: boolean = true) => {
     if (!user) return
 
     try {
@@ -60,16 +76,22 @@ export default function ApplyPage() {
         .from('form_submissions')
         .select('*')
         .eq('user_id', user.id)
-        .single()
+        .maybeSingle()
 
-      if (data) {
+      if (error) {
+        console.error('Error fetching submission:', error)
+        return
+      }
+
+      if (data && isMounted) {
         if (data.status === 'submitted') {
           router.push('/results')
           return
         }
-        setAnswers(data.answers as Record<string, any>)
+        setAnswers((data.answers as Record<string, any>) || {})
       }
     } catch (err) {
+      console.error('Unexpected error:', err)
     }
   }
 
@@ -82,9 +104,16 @@ export default function ApplyPage() {
 
   const validateForm = () => {
     for (const question of questions) {
-      if (question.required && !answers[question.id]) {
-        setError(`필수 항목을 입력해주세요: ${question.title}`)
-        return false
+      if (question.required) {
+        const answer = answers[question.id]
+        if (answer === undefined || answer === null || answer === '') {
+          setError(`필수 항목을 입력해주세요: ${question.title}`)
+          return false
+        }
+        if (Array.isArray(answer) && answer.length === 0) {
+          setError(`필수 항목을 입력해주세요: ${question.title}`)
+          return false
+        }
       }
     }
     return true
@@ -100,35 +129,25 @@ export default function ApplyPage() {
     setError('')
 
     try {
-      const { data: existing } = await supabase
+      const { error } = await supabase
         .from('form_submissions')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('status', 'draft')
-        .single()
-
-      if (existing) {
-        const { error } = await supabase
-          .from('form_submissions')
-          .update({ answers })
-          .eq('id', existing.id)
-
-        if (error) throw error
-      } else {
-        const { error } = await supabase
-          .from('form_submissions')
-          .insert({
+        .upsert(
+          {
             user_id: user.id,
             answers,
             status: 'draft',
-          })
+          },
+          {
+            onConflict: 'user_id',
+            ignoreDuplicates: false,
+          }
+        )
 
-        if (error) throw error
-      }
+      if (error) throw error
 
       alert('임시 저장되었습니다!')
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message || '임시 저장에 실패했습니다.')
     } finally {
       setSubmitting(false)
     }
@@ -150,40 +169,28 @@ export default function ApplyPage() {
     setError('')
 
     try {
-      const { data: existing } = await supabase
+      const { error } = await supabase
         .from('form_submissions')
-        .select('id')
-        .eq('user_id', user.id)
-        .single()
-
-      if (existing) {
-        const { error } = await supabase
-          .from('form_submissions')
-          .update({
-            answers,
-            status: 'submitted',
-          })
-          .eq('id', existing.id)
-
-        if (error) throw error
-      } else {
-        const { error } = await supabase
-          .from('form_submissions')
-          .insert({
+        .upsert(
+          {
             user_id: user.id,
             answers,
             status: 'submitted',
-          })
+          },
+          {
+            onConflict: 'user_id',
+            ignoreDuplicates: false,
+          }
+        )
 
-        if (error) throw error
-      }
+      if (error) throw error
 
       setSuccess(true)
       setTimeout(() => {
         router.push('/results')
       }, 2000)
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message || '지원서 제출에 실패했습니다.')
     } finally {
       setSubmitting(false)
     }
