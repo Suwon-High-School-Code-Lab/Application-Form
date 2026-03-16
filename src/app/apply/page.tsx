@@ -211,7 +211,7 @@ export default function ApplyPage() {
   if (success) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="max-w-md animate-scale-in">
+        <Card className="max-w-2xl w-full animate-scale-in">
           <CardHeader>
             <CardTitle>지원서가 제출되었습니다!</CardTitle>
             <CardDescription>
