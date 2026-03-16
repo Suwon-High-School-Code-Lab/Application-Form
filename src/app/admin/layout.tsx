@@ -1,32 +1,61 @@
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Button } from '@/components/ui/button'
 import { LayoutDashboard, FileText, LogOut, Users, Settings, ClipboardList } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
-
-export default async function AdminLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
+  const [userEmail, setUserEmail] = useState<string>('')
+  const supabase = createClient()
 
-  if (!user) {
-    redirect('/login')
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) {
+        router.push('/login')
+        return
+      }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+      if (profile?.role !== 'admin') {
+        router.push('/')
+        return
+      }
+
+      setUserEmail(user.email || '')
+      setLoading(false)
+    }
+
+    checkAuth()
+  }, [router, supabase])
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
   }
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  if (profile?.role !== 'admin') {
-    redirect('/')
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">로딩 중...</div>
+      </div>
+    )
   }
 
   return (
@@ -34,7 +63,7 @@ export default async function AdminLayout({
       <aside className="w-64 border-r bg-card">
         <div className="p-6">
           <h2 className="text-2xl font-bold">관리자 패널</h2>
-          <p className="text-sm text-muted-foreground">{user.email}</p>
+          <p className="text-sm text-muted-foreground">{userEmail}</p>
         </div>
         
         <nav className="space-y-2 px-4">
@@ -65,12 +94,14 @@ export default async function AdminLayout({
         </nav>
 
         <div className="absolute bottom-4 left-4 right-4 space-y-2">
-          <form action="/api/auth/signout" method="post">
-            <Button variant="ghost" className="w-full justify-start hover:bg-accent transition-colors" type="submit">
-              <LogOut className="mr-2 h-4 w-4" />
-              로그아웃
-            </Button>
-          </form>
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start hover:bg-accent transition-colors" 
+            onClick={handleSignOut}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            로그아웃
+          </Button>
         </div>
       </aside>
 

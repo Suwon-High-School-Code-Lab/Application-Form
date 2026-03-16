@@ -1,17 +1,42 @@
-import { createClient } from '@/lib/supabase/server'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 import { UserManagement } from '@/components/admin/UserManagement'
 
-export default async function UsersPage() {
-  const supabase = await createClient()
-  
-  const { data: users, error } = await supabase
-    .from('profiles')
-    .select('id, email, grade, class, student_number, role, created_at')
-    .order('created_at', { ascending: false })
+export default function UsersPage() {
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [users, setUsers] = useState<any[]>([])
+  const supabase = createClient()
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id, email, grade, class, student_number, role, created_at')
+          .order('created_at', { ascending: false })
+
+        if (error) throw error
+        setUsers(data || [])
+      } catch (err: any) {
+        console.error('Error fetching users:', err)
+        setError('사용자 목록을 불러오는 중 오류가 발생했습니다.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchUsers()
+  }, [supabase])
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-[400px]">로딩 중...</div>
+  }
 
   if (error) {
-    console.error('Error fetching users:', error)
-    return <div>사용자 목록을 불러오는 중 오류가 발생했습니다.</div>
+    return <div>{error}</div>
   }
 
   return (
@@ -23,7 +48,7 @@ export default async function UsersPage() {
         </p>
       </div>
       
-      <UserManagement users={users || []} />
+      <UserManagement users={users} />
     </div>
   )
 }
